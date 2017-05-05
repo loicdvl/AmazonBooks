@@ -1,3 +1,4 @@
+package model;
 
 public class User {
 	
@@ -46,6 +47,12 @@ public class User {
 
 	public void setBasket(Command basket) {
 		this.basket = basket;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", login=" + login + ", password=" + password + ", name=" + name + ", basket="
+				+ basket + "]";
 	}
 
 	

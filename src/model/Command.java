@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package model;
 import java.util.Map;
 
 public class Command {
@@ -22,6 +22,11 @@ public class Command {
 	}
 	public void setBooks(Map<Book, Integer> books) {
 		this.books = books;
+	}
+
+	@Override
+	public String toString() {
+		return "Command [user=" + user + ", books=" + books + "]";
 	}
 	
 	
