@@ -59,6 +59,24 @@ public class Book {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+        if (obj==this) {
+            return true;
+        }
+        if (obj instanceof Book) {
+        	Book other = (Book) obj;
+            if (id != other.getId()) { return false; }
+            if (!title.equals(other.getTitle())) { return false; }
+            if (!author.equals(other.getAuthor())) { return false; }
+            if (price != other.getPrice()) { return false; }
+            if (!image.equals(other.getImage())) { return false; }
+            if (!description.equals(other.getDescription())) { return false; }
+            return true;
+        }
+        return false;
+    }
 
 	@Override
 	public String toString() {

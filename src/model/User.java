@@ -39,6 +39,22 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+        if (obj==this) {
+            return true;
+        }
+        if (obj instanceof User) {
+        	User other = (User) obj;
+            if (id != other.getId()) { return false; }
+            if (!login.equals(other.getLogin())) { return false; }
+            if (!password.equals(other.getPassword())) { return false; }
+            if (!name.equals(other.getName())) { return false; }
+            return true;
+        }
+        return false;
+    }
 
 	@Override
 	public String toString() {

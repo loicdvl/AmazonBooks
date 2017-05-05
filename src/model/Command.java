@@ -24,6 +24,21 @@ public class Command {
 	public void setBooks(Map<Book, Integer> books) {
 		this.books = books;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+        if (obj==this) {
+            return true;
+        }
+        if (obj instanceof Command) {
+        	Command other = (Command) obj;
+        	
+            if (!user.equals(other.getUser())) { return false; }
+            if (!books.equals(other.getBooks())) { return false; }
+            return true;
+        }
+        return false;
+    }
 
 	@Override
 	public String toString() {

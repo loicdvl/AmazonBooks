@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import configuration.DBUtil;
+import model.Functions;
 import model.User;
 
 public class UserDAO{
@@ -46,8 +47,9 @@ public class UserDAO{
 	public void create(User obj) {
 		
 		String query = "INSERT INTO useraccount VALUES (" + obj.getId() + ",'" 
-					   + obj.getLogin() + "','" + obj.getPassword() + "','" 
-					   + obj.getName() + "');";
+					   + Functions.echapStringSql(obj.getLogin()) + "','" 
+					   + Functions.echapStringSql(obj.getPassword()) + "','" 
+					   + Functions.echapStringSql(obj.getName()) + "');";
 
 	try {
 		statement = connection.createStatement();
@@ -63,9 +65,10 @@ public class UserDAO{
 
 	public void update(User obj) {
 		
-		String query = "UPDATE useraccount SET login = '" + obj.getLogin()
-					   + "', password = '" +  obj.getPassword() + "', name = '" 
-					   + obj.getName() + "' WHERE iduser = " + obj.getId() + ";" ;
+		String query = "UPDATE useraccount SET login = '" + Functions.echapStringSql(obj.getLogin())
+					   + "', password = '" +  Functions.echapStringSql(obj.getPassword()) 
+					   + "', name = '" + Functions.echapStringSql(obj.getName()) + "' WHERE iduser = " 
+					   + obj.getId() + ";" ;
 
 		try {
 			statement = connection.createStatement();
@@ -81,12 +84,16 @@ public class UserDAO{
 
 	public void delete(User obj) {
 		
-		new CommandDAO().deleteCommandsContainingUser(obj);
-		
-		String query = "DELETE FROM useraccount WHERE iduser = " + obj.getId() + ";" ;
-
 		try {
+			
 		    statement = connection.createStatement();
+		    
+			String queryDelete = "DELETE FROM command WHERE iduser = " + obj.getId() + ";" ;
+		    statement.executeUpdate(queryDelete);
+		
+			statement = connection.createStatement();
+
+		    String query = "DELETE FROM useraccount WHERE iduser = " + obj.getId() + ";" ;		
 		    statement.executeUpdate(query);
 		}
 		catch (SQLException e) {

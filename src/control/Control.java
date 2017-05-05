@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import model.dao.BookDAO;
+import model.dao.CommandDAO;
+import model.dao.UserDAO;
 
 /**
  *  Servlet servant de controleur pour aiguiller les différentes vues jsp
@@ -31,7 +33,11 @@ public class Control extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//String choix = request.getParameter("choix");
 		String page = "index.jsp";
+		
 		System.out.println(new BookDAO().findById(1));
+		System.out.println(new UserDAO().findById(1));
+		System.out.println(new CommandDAO().findById(1));
+		
 
 		request.getRequestDispatcher(page).forward(request, response);
 	}

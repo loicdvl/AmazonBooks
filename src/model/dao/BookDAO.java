@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import configuration.DBUtil;
 import model.Book;
+import model.Functions;
 
 public class BookDAO {
 
@@ -47,9 +48,10 @@ public class BookDAO {
 	public void create(Book obj) {
 		
 		String query = "INSERT INTO book VALUES (" + obj.getId() + ",'" 
-					   + obj.getTitle() + "','" + obj.getAuthor() + "'," 
-					   + obj.getPrice() + ",'" + obj.getImage() + "','" 
-					   + obj.getDescription() + "');";
+					   + Functions.echapStringSql(obj.getTitle()) + "','" 
+					   + Functions.echapStringSql(obj.getAuthor()) + "'," 
+					   + obj.getPrice() + ",'" + Functions.echapStringSql(obj.getImage()) + "','" 
+					   + Functions.echapStringSql(obj.getDescription()) + "');";
 
 		try {
 			statement = connection.createStatement();
@@ -64,10 +66,10 @@ public class BookDAO {
 
 	public void update(Book obj) {
 		
-		String query = "UPDATE book SET title = '" + obj.getTitle() 
-					   + "', author = '" +  obj.getAuthor() + "', price = " 
-					   + obj.getPrice() + ", image = '" + obj.getImage() 
-					   + "', description = '" + obj.getDescription() 
+		String query = "UPDATE book SET title = '" + Functions.echapStringSql(obj.getTitle()) 
+					   + "', author = '" +  Functions.echapStringSql(obj.getAuthor()) + "', price = " 
+					   + obj.getPrice() + ", image = '" + Functions.echapStringSql(obj.getImage()) 
+					   + "', description = '" + Functions.echapStringSql(obj.getDescription()) 
 					   + "' WHERE idbook = " + obj.getId() + ";" ;
 		
 		 try {
@@ -84,12 +86,15 @@ public class BookDAO {
 
 	public void delete(Book obj) {
 		
-		new CommandDAO().deleteCommandsContainingBook(obj);
-		
-		String query = "DELETE FROM book WHERE idbook = " + obj.getId() + ";" ;
-
 		try {
 		    statement = connection.createStatement();
+		    
+			String queryDelete = "DELETE FROM command WHERE idbook = " + obj.getId() + ";" ;
+		    statement.executeUpdate(queryDelete);
+		
+			statement = connection.createStatement();
+
+		    String query = "DELETE FROM book WHERE idbook = " + obj.getId() + ";" ;
 		    statement.executeUpdate(query);
 		}
 		catch (SQLException e) {

@@ -23,12 +23,12 @@ public class CommandDAO {
 
 	public Command findById(int iduser) {
 		
-		String query = "SELECT * FROM command c, useraccount u WHERE c.iduser = u.iduser AND"
-					   + " iduser = " + iduser + ";";
+		String query = "SELECT * FROM command c, useraccount u, book b WHERE c.iduser = u.iduser "
+						+ "AND b.idbook=c.idbook AND"+ " c.iduser = " + iduser + ";";
 		ResultSet rs = null;
 		User user = null;
 		Map<Book,Integer> lesLivres = new HashMap<Book,Integer>();
-		Book b = null;
+		Book book = null;
 		
 		try {
 
@@ -39,11 +39,11 @@ public class CommandDAO {
 				user = new User(rs.getInt("iduser"), rs.getString("login"), 
 								rs.getString("password"), rs.getString("name"));
 				
-				b = new Book(rs.getInt("idbook"), rs.getString("title"), 
+				book = new Book(rs.getInt("idbook"), rs.getString("title"), 
 						 rs.getString("author"), rs.getFloat("price"),
 						 rs.getString("image"), rs.getString("description"));
 				
-				lesLivres.put(b, rs.getInt("qte"));
+				lesLivres.put(book, rs.getInt("qte"));
 				
 			}
 
@@ -60,13 +60,61 @@ public class CommandDAO {
 	}
 
 	public void create(Command obj) {
-		// TODO Auto-generated method stub
+		
+		try {
+
+			for(Map.Entry<Book,Integer> book : obj.getBooks().entrySet()){
+				
+				statement = connection.createStatement();
+        		
+				String query = "INSERT INTO command VALUES (" + obj.getUser().getId() + "," 
+						   + book.getKey().getId() + "," + book.getValue() + ");";
+        		
+        		statement.executeUpdate(query);
+			}	
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+			DBUtil.close(statement);
+		}
 		
 	}
 
 	public void update(Command obj) {
-		// TODO Auto-generated method stub
-		
+				
+		try {
+			
+			Command cmdDatabase = findById(obj.getUser().getId());
+			
+			for(Map.Entry<Book,Integer> newCmdBooks : obj.getBooks().entrySet()){
+
+				for(Map.Entry<Book,Integer> oldCmdBooks : cmdDatabase.getBooks().entrySet()){
+
+		            if(newCmdBooks.getKey().equals(oldCmdBooks.getKey())){
+		            	
+		            	if(newCmdBooks.getValue() != oldCmdBooks.getValue()){
+		            		
+		        			statement = connection.createStatement();
+
+		            		String query = "UPDATE command SET qte = "+ newCmdBooks.getValue() 
+		            					   + " WHERE idbook = " + newCmdBooks.getKey().getId() 
+		            					   + " AND iduser = " + obj.getUser().getId() + ";" ;
+		            		
+		            		statement.executeUpdate(query);
+			                
+			            }		                
+		            }
+		        }
+	        }		
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+			DBUtil.close(statement);
+		}
 	}
 	
 	public void deleteCommandsContainingUser(User  obj) {
