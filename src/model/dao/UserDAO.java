@@ -1,37 +1,123 @@
 package model.dao;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import configuration.DBUtil;
 import model.User;
 
-public class UserDAO implements DAO<User> {
+public class UserDAO{
+	
+	public Connection connection;
+	private Statement statement;
 
-	@Override
+	public UserDAO() {
+		connection = DBUtil.getConnection();
+	}
+
 	public User findById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String query = "SELECT * FROM useraccount WHERE iduser = " + id + ";";
+		ResultSet rs = null;
+		User user = null;
+		
+		try {
+
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			
+			while (rs.next()) {
+				user = new User(rs.getInt("iduser"), rs.getString("login"), 
+								rs.getString("password"), rs.getString("name"));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
+
+		return user;
 	}
 
-	@Override
 	public void create(User obj) {
-		// TODO Auto-generated method stub
+		
+		String query = "INSERT INTO useraccount VALUES (" + obj.getId() + ",'" 
+					   + obj.getLogin() + "','" + obj.getPassword() + "','" 
+					   + obj.getName() + "');";
+
+	try {
+		statement = connection.createStatement();
+		statement.executeUpdate(query);
+
+	} catch (SQLException e) {
+		System.out.println("Erreur SQL :" + e);
+	} finally {
+		DBUtil.close(statement);
+	}
 		
 	}
 
-	@Override
 	public void update(User obj) {
-		// TODO Auto-generated method stub
 		
+		String query = "UPDATE useraccount SET login = '" + obj.getLogin()
+					   + "', password = '" +  obj.getPassword() + "', name = '" 
+					   + obj.getName() + "' WHERE iduser = " + obj.getId() + ";" ;
+
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+			DBUtil.close(statement);
+		}
 	}
 
-	@Override
 	public void delete(User obj) {
-		// TODO Auto-generated method stub
 		
+		new CommandDAO().deleteCommandsContainingUser(obj);
+		
+		String query = "DELETE FROM useraccount WHERE iduser = " + obj.getId() + ";" ;
+
+		try {
+		    statement = connection.createStatement();
+		    statement.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+		    DBUtil.close(statement);
+		}
 	}
 
-	@Override
 	public int getMaxId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		
+		String query = "SELECT max(iduser) FROM useraccount;";
+		ResultSet rs = null;
+		int id = 0;
 
+		try {
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+
+			while (rs.next()) {
+
+				id = rs.getInt("max");
+			}
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
+
+		return id;
+	}
 }

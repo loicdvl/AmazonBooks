@@ -8,68 +8,119 @@ import java.sql.Statement;
 import configuration.DBUtil;
 import model.Book;
 
-public class BookDAO implements DAO<Book> {
-	
+public class BookDAO {
+
 	public Connection connection;
 	private Statement statement;
 
+	public BookDAO() {
+		connection = DBUtil.getConnection();
+	}
 
-    public BookDAO() {
-    	connection = DBUtil.getConnection();
-    }
-
-
-	@Override
 	public Book findById(int id) {
+		
 		String query = "SELECT * FROM book WHERE idbook = " + id + ";";
-        ResultSet rs = null;
-        Book b = null;
-        try {
+		ResultSet rs = null;
+		Book b = null;
+		
+		try {
 
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
-            while(rs.next()){
-            	b = new Book(rs.getInt("idbook"),rs.getString("title"),
-            			rs.getString("author"),rs.getFloat("price"),
-            			rs.getString("image"),rs.getString("description"));
-                
-            }
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			
+			while (rs.next()) {
+				b = new Book(rs.getInt("idbook"), rs.getString("title"), 
+							 rs.getString("author"), rs.getFloat("price"),
+							 rs.getString("image"), rs.getString("description"));
+			}
 
-        }
-        catch (SQLException e) {
-            System.out.println("Erreur SQL :" + e);
-        }
-        finally {
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
 
-            DBUtil.close(rs);
-            DBUtil.close(statement);
-        }
-
-        return b;
+		return b;
 	}
 
-	@Override
 	public void create(Book obj) {
-		// TODO Auto-generated method stub
 		
+		String query = "INSERT INTO book VALUES (" + obj.getId() + ",'" 
+					   + obj.getTitle() + "','" + obj.getAuthor() + "'," 
+					   + obj.getPrice() + ",'" + obj.getImage() + "','" 
+					   + obj.getDescription() + "');";
+
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate(query);
+
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(statement);
+		}
 	}
 
-	@Override
 	public void update(Book obj) {
-		// TODO Auto-generated method stub
 		
+		String query = "UPDATE book SET title = '" + obj.getTitle() 
+					   + "', author = '" +  obj.getAuthor() + "', price = " 
+					   + obj.getPrice() + ", image = '" + obj.getImage() 
+					   + "', description = '" + obj.getDescription() 
+					   + "' WHERE idbook = " + obj.getId() + ";" ;
+		
+		 try {
+		     statement = connection.createStatement();
+		     statement.executeUpdate(query);
+		 }
+		 catch (SQLException e) {
+		     System.out.println("Erreur SQL :" + e);
+		 }
+		 finally {
+		     DBUtil.close(statement);
+		 }
 	}
 
-	@Override
 	public void delete(Book obj) {
-		// TODO Auto-generated method stub
 		
+		new CommandDAO().deleteCommandsContainingBook(obj);
+		
+		String query = "DELETE FROM book WHERE idbook = " + obj.getId() + ";" ;
+
+		try {
+		    statement = connection.createStatement();
+		    statement.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+		    DBUtil.close(statement);
+		}
 	}
 
-	@Override
 	public int getMaxId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		
+		String query = "SELECT max(idbook) FROM book;";
+		ResultSet rs = null;
+		int id = 0;
 
+		try {
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+
+			while (rs.next()) {
+
+				id = rs.getInt("max");
+			}
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
+
+		return id;
+	}
 }

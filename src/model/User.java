@@ -6,15 +6,13 @@ public class User {
 	private String login;
 	private String password;
 	private String name;
-	private Command basket;
 	
-	public User(int id, String login, String password, String name,Command b) {
+	public User(int id, String login, String password, String name) {
 		
 		this.id = id;
 		this.login = login;
 		this.password = password;
 		this.name = name;
-		this.basket = b;
 	}
 	
 	public int getId() {
@@ -41,18 +39,11 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Command getBasket() {
-		return basket;
-	}
-
-	public void setBasket(Command basket) {
-		this.basket = basket;
-	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", login=" + login + ", password=" + password + ", name=" + name + ", basket="
-				+ basket + "]";
+		return "User [id=" + id + ", login=" + login + ", password=" + password + ", name=" 
+				+ name + "]";
 	}
 
 	

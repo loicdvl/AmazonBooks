@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="assets/CSS/styles.css" media="screen" />
 		<link rel="icon" type="image/png" href="assets/images/icon.png" />
 		
-		<title>Filière</title>
+		<title>Bookenaton</title>
 		
 	</head>
 
@@ -20,7 +20,9 @@
 	
 	<div id=contenu align="center">
 						
-	<h1 align="center">Filière</h1>
+		<h1 align="center">Bienvenue</h1>
+		
+	</div>
 		
 </body>
 
