@@ -127,4 +127,30 @@ public class UserDAO{
 
 		return id;
 	}
+
+	public User findByLogin(String str) {
+		
+		String query = "SELECT * FROM useraccount WHERE login = '" + str + "';";
+		ResultSet rs = null;
+		User user = null;
+		
+		try {
+
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			
+			while (rs.next()) {
+				user = new User(rs.getInt("iduser"), rs.getString("login"), 
+								rs.getString("password"), rs.getString("name"));
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
+
+		return user;
+	}
 }
