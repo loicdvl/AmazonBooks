@@ -81,6 +81,27 @@ public class CommandDAO {
 		}
 		
 	}
+	
+	public void createEntry(int idBook, int idUser, int quantity) {
+		
+		try {
+
+				
+			statement = connection.createStatement();
+    		
+			String query = "INSERT INTO command VALUES (" + idUser + "," 
+					   + idBook + "," + quantity + ");";
+    		
+    		statement.executeUpdate(query);
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+			DBUtil.close(statement);
+		}
+		
+	}
 
 	public void update(Command obj) {
 				
@@ -117,9 +138,30 @@ public class CommandDAO {
 		}
 	}
 	
-	public void deleteCommandsContainingUser(User  obj) {
+	public void updateEntry(int idBook, int idUser, int quantity) {
 		
-		String query = "DELETE FROM command WHERE iduser = " + obj.getId() + ";" ;
+		try {
+		            		
+			statement = connection.createStatement();
+
+    		String query = "UPDATE command SET qte = "+ quantity 
+    					   + " WHERE idbook = " + idBook
+    					   + " AND iduser = " + idUser + ";" ;
+    		
+    		statement.executeUpdate(query);
+			                	
+		}
+		catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		}
+		finally {
+			DBUtil.close(statement);
+		}
+	}
+	
+	public void deleteCommandsContainingUser(int idUser) {
+		
+		String query = "DELETE FROM command WHERE iduser = " + idUser + ";" ;
 
 		try {
 		    statement = connection.createStatement();
@@ -149,10 +191,10 @@ public class CommandDAO {
 		}
 	}
 
-	public void deleteBookFromCommand(Command obj, Book book) {
+	public void deleteBookFromCommand(int idUser, int idBook) {
 		
-		String query = "DELETE FROM command WHERE iduser = " + obj.getUser().getId() + 
-					   "AND idbook = "+ book.getId() +";" ;
+		String query = "DELETE FROM command WHERE iduser = " + idUser + 
+					   "AND idbook = "+ idBook +";" ;
 
 		try {
 		    statement = connection.createStatement();

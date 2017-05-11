@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="assets/CSS/styles.css" media="screen" />
 		<link rel="icon" type="image/png" href="assets/images/icon.png" />
 		
-		<title>Accueil</title>
+		<title>Connexion</title>
 		
 	</head>
 
@@ -22,8 +22,22 @@
 	
 	<div id=contenu align="center">
 						
-		<h1 align="center">Bienvenue ${user.name} !</h1>
+		<h1 align="center">Bookenaton</h1>
 		<br/>
+		<form method="post">
+				   Login : <input name="login" type="text"/><br/>
+			Mot de passe : <input name="password" type="password"/><br/>
+			<input name="Valider" type="submit"/>
+			
+			<%
+				String erreur = (String) request.getAttribute("erreur");
+				if(erreur != null){
+					%> 
+						<%= erreur %>
+					<% 
+				}
+			%>
+		</form>
 		
 	</div>
 		

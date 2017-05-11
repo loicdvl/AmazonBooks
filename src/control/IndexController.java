@@ -2,6 +2,7 @@ package control;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.Book;
+import model.Command;
 import model.User;
 import model.dao.BookDAO;
 import model.dao.CommandDAO;
@@ -19,14 +22,14 @@ import model.dao.UserDAO;
  *  @author Benoit
  */
 @WebServlet("/")
-public class Control extends HttpServlet {
+public class IndexController extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Control() {
+    public IndexController() {
     }
 
 	/**
@@ -34,43 +37,32 @@ public class Control extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		/*String choix = request.getParameter("choix");
+		String choix = request.getParameter("choix");
 		String page = "";
-		
-		switch(choix){
-		
-			/*case "semestre" :
-				String idfiliere = request.getParameter("idfiliere");
-				Filiere fil = filiereDao.findById(Integer.valueOf(idfiliere));
-				request.setAttribute("fil", fil);
-	            page = "semestre.jsp";
-				break;
-			case "suppression" : 
-				String idfiliere = request.getParameter("idfiliere");
-				Filiere fil = filiereDao.findById(Integer.valueOf(idfiliere));
-				filiereDao.delete(fil);
-				page = "index.jsp";
-
-				break;
-			case "modification" : 
-				String idfiliere = request.getParameter("idfiliere");
-				Filiere fil = filiereDao.findById(Integer.valueOf(idfiliere));
-				request.setAttribute("fil", fil);
-	            page = "modifFiliere.jsp";
-				
-				break;
-			case "ajout" : 
-				page = "ajoutFiliere.jsp";
+		if(choix != null){
+			switch(choix){
+			
+			case "profile" :
+				int iduser = Integer.valueOf(request.getParameter("iduser"));
+				User user = new UserDAO().findById(iduser);
+				request.setAttribute("user", user);
+	            page = "profile.jsp";
 				break;
 				
-			default:
-	            page = "index.jsp";
-	            break;
+			case "basket" :
+				int iduser2 = Integer.valueOf(request.getParameter("iduser"));
+				User user2 = new UserDAO().findById(iduser2);
+				Command cmd = new CommandDAO().findById(iduser2);
+				request.setAttribute("command", cmd);
+				request.setAttribute("user", user2);
+	            page = "basket.jsp";
+				break;
+			}
+		} else {
+			page = "login.jsp";
 		}
 		
-
-		*/
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher(page).forward(request, response);
 
 	}
 
@@ -88,7 +80,7 @@ public class Control extends HttpServlet {
 		if(loginEntered.equals("") || passwordEntered.equals("")){
 			
 			request.setAttribute("erreur", "Il faut remplir les deux champs.");
-			page = "/index.jsp";
+			page = "/login.jsp";
 			
 		} else {
 			
@@ -97,18 +89,21 @@ public class Control extends HttpServlet {
 			if(user == null) {
 				
 				request.setAttribute("erreur", "Ce login n'existe pas.");
-				page = "/index.jsp";
+				page = "/login.jsp";
 				
 			} else {
 				if(!passwordEntered.equals(user.getPassword())) {
 					
 					request.setAttribute("erreur", "Mot de passe éroné.");
-					page = "/index.jsp";
+					page = "/login.jsp";
 					
 				} else {
 					
 					request.setAttribute("user", user);
-					page = "/accueil.jsp";
+					
+					ArrayList<Book> books = new BookDAO().getAllBooks();
+					request.setAttribute("books", books);
+					page = "/index.jsp";
 					
 				}
 			}
