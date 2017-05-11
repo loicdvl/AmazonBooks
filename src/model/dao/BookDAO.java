@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import configuration.DBUtil;
 import model.Book;
@@ -127,5 +128,35 @@ public class BookDAO {
 		}
 
 		return id;
+	}
+	
+public ArrayList<Book> getAllBooks() {
+		
+		String query = "SELECT * FROM book;";
+		ResultSet rs = null;
+		ArrayList<Book> books = new ArrayList<Book>();
+		
+		try {
+
+			statement = connection.createStatement();
+			rs = statement.executeQuery(query);
+			
+			while (rs.next()) {
+				
+				Book b = new Book(rs.getInt("idbook"), rs.getString("title"), 
+							 rs.getString("author"), rs.getFloat("price"),
+							 rs.getString("image"), rs.getString("description"));
+				
+				books.add(b);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Erreur SQL :" + e);
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(statement);
+		}
+
+		return books;
 	}
 }
